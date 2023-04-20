@@ -3,13 +3,11 @@
 #include <array>
 #include <flecs.h>
 
-static const int kTotalActorNumberPerCell = 50;
 struct EcsActor{
     std::array<char, 256> data_buffer = {};
     bool is_active = false;
 };
 
-static const int kTotalCellNumber = 20;
 struct EcsCell {
     flecs::query<EcsActor> actors_query;
 };
@@ -20,4 +18,10 @@ struct EcsWorldCells {
 
 struct GlobalCounter {
     uint64_t calc_actors = 0;
+};
+
+struct TestParameters {
+  int64_t total_cells = 0;
+  int64_t total_actors_in_each_cell = 0;
+  TestParameters(int64_t total_cells, int64_t total_actors_in_each_cell);
 };

@@ -27,9 +27,9 @@ FetchContent_MakeAvailable(benchmark)
 MACRO(add_gtest_benchmark target_name)
     add_executable(${target_name} "${target_name}.cpp")
     target_link_libraries(${target_name}
-            benchmark
-            ${CMAKE_THREAD_LIBS_INIT}
-            gtest_main)
+            PRIVATE  benchmark
+            PRIVATE ${CMAKE_THREAD_LIBS_INIT}
+            PRIVATE gtest_main)
 ENDMACRO()
 
 MACRO(add_gtest_benchmark_default target_name)
