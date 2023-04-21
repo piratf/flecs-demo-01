@@ -32,7 +32,7 @@ void LoopAllActors(World &world) {
     for (auto &index : cell.members) {
       auto &actor = world.all_actors[index];
       actor.is_active = !actor.is_active;
-      ++world.counter.calc_actors;
+      world.counter.CountActor();
     }
   }
 }

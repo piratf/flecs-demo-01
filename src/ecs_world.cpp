@@ -29,9 +29,12 @@ void InitWorld(const flecs::world &world, const TestParameters &parameters) {
   world.set<GlobalCounter>({});
   InitCells(world, parameters.total_cells);
   InitActors(world, parameters.total_actors_in_each_cell);
-  world.system<EcsActor>().group_by<EcsRelationBelongsToCell>().kind(flecs::OnUpdate).iter([](flecs::iter& it, EcsActor *actors) {
+  world.system<EcsActor>().group_by<EcsRelationBelongsToCell>().kind(flecs::OnUpdate).iter([](flecs::iter &it,
+                                                                                              EcsActor *actors) {
+    auto *global_counter = it.world().get_mut<GlobalCounter>();
     for (auto i : it) {
       actors[i].is_active = !actors[i].is_active;
+      global_counter->CountActor();
     }
   });
 }

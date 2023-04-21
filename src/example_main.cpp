@@ -11,7 +11,7 @@ void InitSystemWithSingletonComponent(flecs::world & world) {
 
     for (auto i : it) {
       std::cout << "     {" << actors[i].guid << ", " << actors[i].is_active << "}\n";
-      ++global_counter->calc_actors;
+      ++global_counter->calc_actors_per_loop;
     }
 
     std::cout << "\n";
@@ -28,7 +28,7 @@ void GetMutSingletonInsideSystem(flecs::world & world) {
 
     for (auto i : it) {
       std::cout << "     {" << actors[i].guid << ", " << actors[i].is_active << "}\n";
-      ++global_counter->calc_actors;
+      ++global_counter->calc_actors_per_loop;
     }
 
     std::cout << "\n";
@@ -78,6 +78,6 @@ int main() {
   //global counter: 6
 
   world.progress();
-  std::cout << "global counter: " << world.get<GlobalCounter>()->calc_actors << std::endl;
+  std::cout << "global counter: " << world.get<GlobalCounter>()->calc_actors_per_loop << std::endl;
   return 0;
 }
