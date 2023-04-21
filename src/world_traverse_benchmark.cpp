@@ -36,7 +36,7 @@ static void EcsWorldProcess(benchmark::State &state) {
   ProfilerStart("./ecs_world.quit.cpu.prof");
 #endif
   ecs_world::CleanUpWorld(world);
-//  printf("total calc actors: %lu\n", world.get<GlobalCounter>()->calc_actors);
+  printf("total calc actors: %lu\n", world.get<GlobalCounter>()->calc_actors);
 }
 
 static void StdWorldProcess(benchmark::State &state) {
@@ -68,11 +68,12 @@ static void StdWorldProcess(benchmark::State &state) {
 //  printf("total calc actors: %lu, cells: %ld, actors in each cell: %ld\n", world.counter.calc_actors, state.range(0), state.range(1));
 }
 
+BENCHMARK(EcsWorldProcess)->Args({20, 500});
 // cell number growths
-BENCHMARK(EcsWorldProcess)->Args({20, 500})->Args({200, 500})->Args({2000, 500});
-BENCHMARK(StdWorldProcess)->Args({20, 500})->Args({200, 500})->Args({2000, 500});
+//BENCHMARK(EcsWorldProcess)->Args({20, 500})->Args({200, 500})->Args({2000, 500});
+//BENCHMARK(StdWorldProcess)->Args({20, 500})->Args({200, 500})->Args({2000, 500});
 // actor number in each cell growths
-BENCHMARK(EcsWorldProcess)->Args({200, 50})->Args({200, 500})->Args({200, 5000});
-BENCHMARK(StdWorldProcess)->Args({200, 50})->Args({200, 500})->Args({200, 5000});
+//BENCHMARK(EcsWorldProcess)->Args({200, 50})->Args({200, 500})->Args({200, 5000});
+//BENCHMARK(StdWorldProcess)->Args({200, 50})->Args({200, 500})->Args({200, 5000});
 
 BENCHMARK_MAIN();

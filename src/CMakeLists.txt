@@ -25,3 +25,8 @@ target_link_libraries(world_traverse_benchmark
         PRIVATE ecs_world
         PRIVATE std_world)
 GPERF_LINK(world_traverse_benchmark)
+
+add_executable(example_main example_main.cpp)
+target_link_libraries(example_main
+        PRIVATE ecs_world)
+GPERF_LINK(example_main)

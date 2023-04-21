@@ -9,43 +9,42 @@ void InitCells(const flecs::world &world, const int64_t total_cells) {
   for (int i = 0; i < total_cells; i++) {
     auto *p_cell = ecs_map_ensure(&cells->cells, i);
     *p_cell = world.entity()
-        .set<EcsCell>({});
+        .set<EcsCell>(EcsCell(i));
   }
 }
 
 void InitActors(const flecs::world &world, const int64_t total_actors_in_each_cell) {
   world.component<EcsActor>();
-  auto all_cells_q = world.query_builder<EcsCell>().build();
+  auto all_cells_q = world.query<const EcsCell>();
   // save query to cell, because creating query is expansive
-  all_cells_q.each([&world, total_actors_in_each_cell](flecs::entity cell_entity, EcsCell &cell) {
+  all_cells_q.each([&world, total_actors_in_each_cell](flecs::entity cell_entity, const EcsCell& cell) {
     for (int i = 0; i < total_actors_in_each_cell; ++i) {
-      world.entity().set<EcsActor>({}).add<EcsRelationBelongsToCell>(cell_entity);
+      world.entity().set<EcsActor>(EcsActor(cell.cell_id * 10000 + i)).add<EcsRelationBelongsToCell, flecs::entity>(cell_entity);
     }
-    cell.actors_query = world.query_builder<EcsActor>().with<EcsRelationBelongsToCell>(cell_entity).build();
   });
   all_cells_q.destruct();
 }
 
-void InitWorld(const flecs::world &world, const TestParameters& parameters) {
+void InitWorld(const flecs::world &world, const TestParameters &parameters) {
   world.set<GlobalCounter>({});
   InitCells(world, parameters.total_cells);
   InitActors(world, parameters.total_actors_in_each_cell);
-  world.system<const EcsCell, GlobalCounter>().term_at(2).singleton().each(ecs_world::LoopAllActors);
+//  world.system<const EcsCell, GlobalCounter>().term_at(2).singleton().each(ecs_world::LoopAllActors);
 }
 
 void LoopAllActors(const EcsCell &cell, GlobalCounter &counter) {
-  cell.actors_query.each([&counter](EcsActor &actor) {
-    actor.is_active = !actor.is_active;
-    ++counter.calc_actors;
-  });
+//  cell.actors_query.each([&counter](EcsActor &actor) {
+//    actor.is_active = !actor.is_active;
+//    ++counter.calc_actors;
+//  });
 }
 
 void CleanUpWorld(const flecs::world &world) {
-  auto all_cells_q = world.query_builder<EcsCell>().build();
-  all_cells_q.each([&world](flecs::entity cell_entity, EcsCell &cell) {
-    cell.actors_query.destruct();
-  });
-  all_cells_q.destruct();
+//  auto all_cells_q = world.query_builder<EcsCell>().build();
+//  all_cells_q.each([&world](flecs::entity cell_entity, EcsCell &cell) {
+//    cell.actors_query.destruct();
+//  });
+//  all_cells_q.destruct();
 
   auto *cells = world.get_mut<EcsWorldCells>();
   ecs_map_fini(&cells->cells);

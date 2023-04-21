@@ -3,21 +3,28 @@
 #include <array>
 #include <flecs.h>
 
-struct EcsActor{
-    std::array<char, 256> data_buffer = {};
-    bool is_active = false;
+struct EcsActor {
+  uint64_t guid = 0;
+  std::array<char, 256> data_buffer = {};
+  bool is_active = false;
+  EcsActor() = default;
+  EcsActor(uint64_t guid) : guid(guid) {}
 };
 
 struct EcsCell {
-    flecs::query<EcsActor> actors_query;
+  int cell_id = 0;
+  EcsCell() = default;
+  explicit EcsCell(int cell_id) : cell_id(cell_id) {}
 };
-struct EcsRelationBelongsToCell{};
+struct EcsRelationBelongsToCell {};
 struct EcsWorldCells {
-    ecs_map_t cells;
+  ecs_map_t cells;
 };
+struct EcsGroup1 {};
+struct EcsGroup2 {};
 
 struct GlobalCounter {
-    uint64_t calc_actors = 0;
+  uint64_t calc_actors = 0;
 };
 
 struct TestParameters {
