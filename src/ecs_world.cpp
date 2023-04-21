@@ -16,10 +16,10 @@ void InitCells(const flecs::world &world, const int64_t total_cells) {
 void InitActors(const flecs::world &world, const int64_t total_actors_in_each_cell) {
   world.component<EcsActor>();
   auto all_cells_q = world.query<const EcsCell>();
-  // save query to cell, because creating query is expansive
-  all_cells_q.each([&world, total_actors_in_each_cell](flecs::entity cell_entity, const EcsCell& cell) {
+  all_cells_q.each([&world, total_actors_in_each_cell](flecs::entity cell_entity, const EcsCell &cell) {
     for (int i = 0; i < total_actors_in_each_cell; ++i) {
-      world.entity().set<EcsActor>(EcsActor(cell.cell_id * 10000 + i)).add<EcsRelationBelongsToCell, flecs::entity>(cell_entity);
+      world.entity().set<EcsActor>(EcsActor(cell.cell_id * 10000 + i)).add<EcsRelationBelongsToCell, flecs::entity>(
+          cell_entity);
     }
   });
   all_cells_q.destruct();
@@ -29,23 +29,14 @@ void InitWorld(const flecs::world &world, const TestParameters &parameters) {
   world.set<GlobalCounter>({});
   InitCells(world, parameters.total_cells);
   InitActors(world, parameters.total_actors_in_each_cell);
-//  world.system<const EcsCell, GlobalCounter>().term_at(2).singleton().each(ecs_world::LoopAllActors);
-}
-
-void LoopAllActors(const EcsCell &cell, GlobalCounter &counter) {
-//  cell.actors_query.each([&counter](EcsActor &actor) {
-//    actor.is_active = !actor.is_active;
-//    ++counter.calc_actors;
-//  });
+  world.system<EcsActor>().group_by<EcsRelationBelongsToCell>().kind(flecs::OnUpdate).iter([](flecs::iter& it, EcsActor *actors) {
+    for (auto i : it) {
+      actors[i].is_active = !actors[i].is_active;
+    }
+  });
 }
 
 void CleanUpWorld(const flecs::world &world) {
-//  auto all_cells_q = world.query_builder<EcsCell>().build();
-//  all_cells_q.each([&world](flecs::entity cell_entity, EcsCell &cell) {
-//    cell.actors_query.destruct();
-//  });
-//  all_cells_q.destruct();
-
   auto *cells = world.get_mut<EcsWorldCells>();
   ecs_map_fini(&cells->cells);
 }
